@@ -24,6 +24,7 @@
     "@aws-cdk/aws-iam": "^1.139.0",
     "@aws-cdk/core": "^1.139.0",
     "aws-cdk-lib": "2.8.0",
+    "cdk-ec2-key-pair": "^3.0.1",
     "constructs": "^10.0.0",
     "source-map-support": "^0.5.16"
   }

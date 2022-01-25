@@ -1,7 +1,7 @@
 import * as cdk from '@aws-cdk/core'
 import * as ec2 from '@aws-cdk/aws-ec2'
 import * as iam from '@aws-cdk/aws-iam'
-import {readFileSync} from 'fs';
+import { readFileSync } from 'fs';
 
 const tag = "mbti";
 
@@ -57,6 +57,9 @@ class BaseResources extends cdk.NestedStack {
     })
 
     this.applicationSg.addIngressRule(ec2.Peer.anyIpv4(), ec2.Port.tcp(80))
+    // Allow SSH access on port tcp/22
+    this.applicationSg.addIngressRule(ec2.Peer.anyIpv4(), ec2.Port.tcp(22), "Allow SSH Access");
+    
   }
 }
 
@@ -82,17 +85,11 @@ class AppResources extends cdk.NestedStack {
       }),
       vpcSubnets: { subnetType: ec2.SubnetType.PUBLIC },
       securityGroup: props.applicationSg,
+      keyName: 'github-action',
     })
 
     const userDataScript = readFileSync('./lib/user-data.sh', 'utf8');
     instance.addUserData(userDataScript);
-
-    // instance.addUserData(
-    //   'yum install -y httpd',
-    //   'systemctl start httpd',
-    //   'systemctl enable httpd',
-    //   'echo "<h1>Hello World from $(hostname -f)</h1>" > /var/www/html/index.html'
-    // )
 
     // Add the policy to access EC2 without SSH
     instance.role.addManagedPolicy(
